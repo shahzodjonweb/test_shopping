@@ -12,6 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function products(){
+        return $this->hasMany(Product::class)->orderBy('created_at', 'asc');
+        } 
+
     /**
      * The attributes that are mass assignable.
      *
