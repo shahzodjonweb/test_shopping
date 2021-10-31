@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Auth;
+use Validator;
+use App\Models\User;
+use App\Models\Category;
+use App\Models\Product;
 
 class CategoriesController extends Controller
 {
@@ -23,7 +30,7 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        //
+       //
     }
 
     /**
@@ -34,7 +41,20 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|string|max:255',
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors());       
+        }
+        
+        $category = new Category();
+        $category -> name = $request['name'];
+        $category -> save();
+
+        return response()
+            ->json(['success' => 1,'message' => 'Created succesfully!']);
     }
 
     /**
@@ -45,7 +65,10 @@ class CategoriesController extends Controller
      */
     public function show($id)
     {
-        //
+        $category =  Category::find($id);
+
+        return response()
+            ->json(['success' => 1,'data' => ['category_name' => $category->name, 'products' => $category->products]]);
     }
 
     /**
@@ -68,7 +91,20 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|string|max:255',
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors());       
+        }
+        
+        $category =  Category::find($id);
+        $category -> name = $request['name'];
+        $category -> save();
+
+        return response()
+            ->json(['success' => 1,'message' => 'Updated succesfully!']);
     }
 
     /**
@@ -79,6 +115,10 @@ class CategoriesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $category =  Category::find($id);
+        $category -> delete();
+
+        return response()
+            ->json(['success' => 1,'message' => 'Deleted succesfully!']);
     }
 }
